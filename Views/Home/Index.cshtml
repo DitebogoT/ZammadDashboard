@@ -1,0 +1,425 @@
+﻿@model ZammadDashboard.Models.DashboardMetrics
+
+@{
+    ViewData["Title"] = "SLA Dashboard";
+}
+
+<style>
+    body {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .dashboard-header {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 25px 30px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-header h1 {
+        color: #1e3c72;
+        margin: 0 0 10px 0;
+        font-size: 32px;
+    }
+
+    .last-updated {
+        color: #666;
+        font-size: 14px;
+    }
+
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .metric-card {
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-left: 5px solid #ccc;
+    }
+
+    .metric-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .metric-card.critical { border-left-color: #dc3545; }
+    .metric-card.warning { border-left-color: #ffc107; }
+    .metric-card.priority { border-left-color: #e83e8c; }
+    .metric-card.info { border-left-color: #17a2b8; }
+    .metric-card.success { border-left-color: #28a745; }
+
+    .metric-icon {
+        font-size: 36px;
+        margin-bottom: 10px;
+    }
+
+    .metric-label {
+        color: #666;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 10px;
+    }
+
+    .metric-value {
+        font-size: 48px;
+        font-weight: bold;
+        color: #333;
+        line-height: 1;
+        margin-bottom: 10px;
+    }
+
+    .metric-detail {
+        color: #888;
+        font-size: 13px;
+    }
+
+    .trend {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 10px;
+    }
+
+    .trend.up {
+        background: #fee;
+        color: #dc3545;
+    }
+
+    .trend.down {
+        background: #efe;
+        color: #28a745;
+    }
+
+    .trend.neutral {
+        background: #f0f0f0;
+        color: #666;
+    }
+
+    .ticket-list-section {
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .ticket-list-section h2 {
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 22px;
+    }
+
+    .ticket-item {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background 0.2s ease;
+    }
+
+    .ticket-item:hover {
+        background: #f8f9fa;
+    }
+
+    .ticket-item:last-child {
+        border-bottom: none;
+    }
+
+    .ticket-id {
+        font-weight: bold;
+        color: #1e3c72;
+        margin-right: 15px;
+        min-width: 80px;
+    }
+
+    .ticket-title {
+        flex: 1;
+        color: #333;
+    }
+
+    .ticket-time {
+        color: #dc3545;
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+        margin-left: 15px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #999;
+    }
+
+    .refresh-indicator {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-size: 14px;
+        color: #666;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+
+    .loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loading-overlay.active {
+        display: flex;
+    }
+
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+    }
+
+    @@keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+</div>
+
+<div class="dashboard-header">
+    <h1>🎯 IT Support SLA Dashboard</h1>
+    <div class="last-updated">Last updated: <span id="lastUpdated">@Model.LastUpdated.ToString("yyyy-MM-dd HH:mm:ss")</span></div>
+</div>
+
+<div class="metrics-grid">
+    <div class="metric-card critical">
+        <div class="metric-icon">🚨</div>
+        <div class="metric-label">SLA Breaches</div>
+        <div class="metric-value" id="slaBreaches">@Model.SlaBreaches</div>
+        <div class="metric-detail">Immediate attention required</div>
+    </div>
+
+    <div class="metric-card warning">
+        <div class="metric-icon">⚠️</div>
+        <div class="metric-label">SLA At Risk</div>
+        <div class="metric-value" id="slaAtRisk">@Model.SlaAtRisk</div>
+        <div class="metric-detail">Within 60 minutes of breach</div>
+    </div>
+
+    <div class="metric-card priority">
+        <div class="metric-icon">🔥</div>
+        <div class="metric-label">Open P1 Tickets</div>
+        <div class="metric-value" id="openP1">@Model.OpenP1Tickets</div>
+        <div class="metric-detail">Critical priority tickets</div>
+    </div>
+
+    <div class="metric-card info">
+        <div class="metric-icon">⏰</div>
+        <div class="metric-label">Open > 48 Hours</div>
+        <div class="metric-value" id="open48Hours">@Model.TicketsOpenMoreThan48Hours</div>
+        <div class="metric-detail">Aging tickets</div>
+    </div>
+
+    <div class="metric-card success">
+        <div class="metric-icon">📊</div>
+        <div class="metric-label">Today's Tickets</div>
+        <div class="metric-value" id="todayTickets">@Model.TodayTicketCount</div>
+        <div class="metric-detail">
+            Yesterday: <span id="yesterdayTickets">@Model.YesterdayTicketCount</span>
+            <div id="trendIndicator">
+                @{
+                    var trendClass = Model.TicketChange > 0 ? "up" : Model.TicketChange < 0 ? "down" : "neutral";
+                    var trendSymbol = Model.TicketChange > 0 ? "↑" : Model.TicketChange < 0 ? "↓" : "→";
+                }
+                <span class="trend @trendClass">@trendSymbol @Math.Abs(Model.TicketChange) (@Math.Abs(Model.ChangePercent).ToString("0.0")%)</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="ticket-list-section">
+    <h2>🚨 SLA Breach Tickets</h2>
+    <div id="breachTickets">
+        @if (Model.SlaBreachTickets.Any())
+        {
+            foreach (var ticket in Model.SlaBreachTickets.Take(10))
+            {
+                <div class="ticket-item">
+                    <span class="ticket-id">#@ticket.Number</span>
+                    <span class="ticket-title">@ticket.Title</span>
+                    <span class="ticket-time">@ticket.TimeRemaining</span>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">No SLA breach tickets 🎉</div>
+        }
+    </div>
+</div>
+
+<div class="ticket-list-section">
+    <h2>⚠️ SLA At Risk Tickets</h2>
+    <div id="riskTickets">
+        @if (Model.SlaAtRiskTickets.Any())
+        {
+            foreach (var ticket in Model.SlaAtRiskTickets.Take(10))
+            {
+                <div class="ticket-item">
+                    <span class="ticket-id">#@ticket.Number</span>
+                    <span class="ticket-title">@ticket.Title</span>
+                    <span class="ticket-time">@ticket.TimeRemaining</span>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">No at-risk tickets 🎉</div>
+        }
+    </div>
+</div>
+
+<div class="ticket-list-section">
+    <h2>🔥 Priority 1 Tickets</h2>
+    <div id="p1Tickets">
+        @if (Model.P1Tickets.Any())
+        {
+            foreach (var ticket in Model.P1Tickets.Take(10))
+            {
+                <div class="ticket-item">
+                    <span class="ticket-id">#@ticket.Number</span>
+                    <span class="ticket-title">@ticket.Title</span>
+                    <span class="ticket-time">@ticket.TimeRemaining</span>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">No P1 tickets 🎉</div>
+        }
+    </div>
+</div>
+
+<div class="refresh-indicator">
+    Auto-refresh: <span id="countdown">60</span>s
+</div>
+
+@section Scripts {
+    <script>
+        const REFRESH_INTERVAL = 60000; // 60 seconds
+        let countdownTimer;
+        let refreshTimer;
+
+        // Fetch fresh metrics
+        async function fetchMetrics() {
+            try {
+                document.getElementById('loadingOverlay').classList.add('active');
+
+                const response = await fetch('/api/DashboardApi/metrics');
+                const data = await response.json();
+
+                updateDashboard(data);
+
+                document.getElementById('loadingOverlay').classList.remove('active');
+            } catch (error) {
+                console.error('Error fetching metrics:', error);
+                document.getElementById('loadingOverlay').classList.remove('active');
+            }
+        }
+
+        // Update dashboard with new data
+        function updateDashboard(data) {
+            document.getElementById('slaBreaches').textContent = data.slaBreaches;
+            document.getElementById('slaAtRisk').textContent = data.slaAtRisk;
+            document.getElementById('openP1').textContent = data.openP1Tickets;
+            document.getElementById('open48Hours').textContent = data.ticketsOpenMoreThan48Hours;
+            document.getElementById('todayTickets').textContent = data.todayTicketCount;
+            document.getElementById('yesterdayTickets').textContent = data.yesterdayTicketCount;
+
+            const change = data.ticketChange;
+            const changePercent = Math.abs(data.changePercent).toFixed(1);
+            const trendClass = change > 0 ? 'up' : change < 0 ? 'down' : 'neutral';
+            const trendSymbol = change > 0 ? '↑' : change < 0 ? '↓' : '→';
+
+            document.getElementById('trendIndicator').innerHTML =
+                `<span class="trend ${trendClass}">${trendSymbol} ${Math.abs(change)} (${changePercent}%)</span>`;
+
+            document.getElementById('lastUpdated').textContent =
+                new Date(data.lastUpdated).toLocaleString();
+
+            // Update ticket lists
+            updateTicketList('breachTickets', data.slaBreachTickets);
+            updateTicketList('riskTickets', data.slaAtRiskTickets);
+            updateTicketList('p1Tickets', data.p1Tickets);
+        }
+
+        function updateTicketList(elementId, tickets) {
+            const container = document.getElementById(elementId);
+
+            if (!tickets || tickets.length === 0) {
+                container.innerHTML = '<div class="empty-state">No tickets in this category 🎉</div>';
+                return;
+            }
+
+            container.innerHTML = tickets.slice(0, 10).map(ticket => `
+                <div class="ticket-item">
+                    <span class="ticket-id">#${ticket.number}</span>
+                    <span class="ticket-title">${ticket.title}</span>
+                    <span class="ticket-time">${ticket.timeRemaining}</span>
+                </div>
+            `).join('');
+        }
+
+        // Countdown timer
+        function startCountdown() {
+            let seconds = 60;
+
+            countdownTimer = setInterval(() => {
+                seconds--;
+                document.getElementById('countdown').textContent = seconds;
+
+                if (seconds <= 0) {
+                    seconds = 60;
+                }
+            }, 1000);
+        }
+
+        // Auto-refresh
+        function startAutoRefresh() {
+            refreshTimer = setInterval(fetchMetrics, REFRESH_INTERVAL);
+        }
+
+        // Initialize
+        startCountdown();
+        startAutoRefresh();
+
+        console.log('Dashboard initialized. Auto-refresh every 60 seconds.');
+    </script>
+}
