@@ -43,6 +43,7 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         border-left: 5px solid #ccc;
+        cursor: pointer;
     }
 
     .metric-card:hover {
@@ -82,6 +83,13 @@
         font-size: 13px;
     }
 
+    .metric-action {
+        margin-top: 10px;
+        font-size: 12px;
+        color: #1e3c72;
+        font-weight: 600;
+    }
+
     .trend {
         display: inline-flex;
         align-items: center;
@@ -92,20 +100,9 @@
         margin-top: 10px;
     }
 
-    .trend.up {
-        background: #fee;
-        color: #dc3545;
-    }
-
-    .trend.down {
-        background: #efe;
-        color: #28a745;
-    }
-
-    .trend.neutral {
-        background: #f0f0f0;
-        color: #666;
-    }
+    .trend.up { background: #fee; color: #dc3545; }
+    .trend.down { background: #efe; color: #28a745; }
+    .trend.neutral { background: #f0f0f0; color: #666; }
 
     .ticket-list-section {
         background: white;
@@ -115,47 +112,147 @@
         margin-bottom: 20px;
     }
 
-    .ticket-list-section h2 {
-        color: #333;
-        margin-bottom: 20px;
-        font-size: 22px;
-    }
-
-    .ticket-item {
-        padding: 15px;
-        border-bottom: 1px solid #eee;
+    .ticket-list-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .ticket-list-header h2 {
+        color: #333;
+        margin: 0;
+        font-size: 22px;
+    }
+
+    .ticket-controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .ticket-search {
+        padding: 8px 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+        width: 250px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 5px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+    .btn-export {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn-export:hover {
+        background: #218838;
+    }
+
+    .ticket-count-badge {
+        background: #1e3c72;
+        color: white;
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .ticket-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    .ticket-table thead {
+        background: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .ticket-table th {
+        padding: 12px 15px;
+        text-align: left;
+        font-weight: 600;
+        color: #495057;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .ticket-table td {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        color: #333;
+        font-size: 14px;
+    }
+
+    .ticket-table tbody tr {
         transition: background 0.2s ease;
     }
 
-    .ticket-item:hover {
+    .ticket-table tbody tr:hover {
         background: #f8f9fa;
     }
 
-    .ticket-item:last-child {
-        border-bottom: none;
-    }
-
-    .ticket-id {
+    .ticket-number {
         font-weight: bold;
         color: #1e3c72;
-        margin-right: 15px;
-        min-width: 80px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
     }
 
-    .ticket-title {
-        flex: 1;
-        color: #333;
+    .ticket-number:hover {
+        text-decoration: underline;
+        color: #2a5298;
     }
 
-    .ticket-time {
-        color: #dc3545;
-        font-size: 13px;
+    .ticket-title-cell {
+        max-width: 400px;
+    }
+
+    .priority-badge {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
         font-weight: 600;
-        white-space: nowrap;
-        margin-left: 15px;
+        text-transform: uppercase;
+    }
+
+    .priority-1 { background: #fee; color: #dc3545; }
+    .priority-2 { background: #fff3cd; color: #856404; }
+    .priority-3 { background: #d1ecf1; color: #0c5460; }
+
+    .time-badge {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .time-badge.overdue {
+        background: #fee;
+        color: #dc3545;
+    }
+
+    .time-badge.warning {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .time-badge.normal {
+        background: #e7f3ff;
+        color: #004085;
     }
 
     .empty-state {
@@ -203,9 +300,35 @@
         animation: spin 1s linear infinite;
     }
 
+    .section-collapsed {
+        display: none;
+    }
+
+    .collapse-toggle {
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .collapse-icon {
+        display: inline-block;
+        transition: transform 0.3s ease;
+    }
+
+    .collapse-icon.collapsed {
+        transform: rotate(-90deg);
+    }
+
     @@keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
+    }
+
+    @@media print {
+        .refresh-indicator,
+        .btn,
+        .ticket-search {
+            display: none;
+        }
     }
 </style>
 
@@ -219,32 +342,36 @@
 </div>
 
 <div class="metrics-grid">
-    <div class="metric-card critical">
+    <div class="metric-card critical" onclick="scrollToSection('breachSection')">
         <div class="metric-icon">🚨</div>
         <div class="metric-label">SLA Breaches</div>
         <div class="metric-value" id="slaBreaches">@Model.SlaBreaches</div>
         <div class="metric-detail">Immediate attention required</div>
+        <div class="metric-action">Click to view tickets ↓</div>
     </div>
 
-    <div class="metric-card warning">
+    <div class="metric-card warning" onclick="scrollToSection('riskSection')">
         <div class="metric-icon">⚠️</div>
         <div class="metric-label">SLA At Risk</div>
         <div class="metric-value" id="slaAtRisk">@Model.SlaAtRisk</div>
         <div class="metric-detail">Within 60 minutes of breach</div>
+        <div class="metric-action">Click to view tickets ↓</div>
     </div>
 
-    <div class="metric-card priority">
+    <div class="metric-card priority" onclick="scrollToSection('p1Section')">
         <div class="metric-icon">🔥</div>
         <div class="metric-label">Open P1 Tickets</div>
         <div class="metric-value" id="openP1">@Model.OpenP1Tickets</div>
         <div class="metric-detail">Critical priority tickets</div>
+        <div class="metric-action">Click to view tickets ↓</div>
     </div>
 
-    <div class="metric-card info">
+    <div class="metric-card info" onclick="scrollToSection('aging48Section')">
         <div class="metric-icon">⏰</div>
         <div class="metric-label">Open > 48 Hours</div>
         <div class="metric-value" id="open48Hours">@Model.TicketsOpenMoreThan48Hours</div>
         <div class="metric-detail">Aging tickets</div>
+        <div class="metric-action">Click to view tickets ↓</div>
     </div>
 
     <div class="metric-card success">
@@ -264,19 +391,52 @@
     </div>
 </div>
 
-<div class="ticket-list-section">
-    <h2>🚨 SLA Breach Tickets</h2>
+<!-- SLA Breach Tickets Section -->
+<div class="ticket-list-section" id="breachSection">
+    <div class="ticket-list-header">
+        <h2 class="collapse-toggle" onclick="toggleSection('breachTickets')">
+            <span class="collapse-icon" id="breachIcon">▼</span>
+            🚨 SLA Breach Tickets 
+            <span class="ticket-count-badge" id="breachCount">@Model.SlaBreachTickets.Count</span>
+        </h2>
+        <div class="ticket-controls">
+            <input type="text" class="ticket-search" id="breachSearch" placeholder="Search tickets..." onkeyup="filterTickets('breachTickets', 'breachSearch')">
+            <button class="btn btn-export" onclick="exportToCSV('breachTickets', 'SLA_Breach_Tickets')">📥 Export</button>
+        </div>
+    </div>
     <div id="breachTickets">
         @if (Model.SlaBreachTickets.Any())
         {
-            foreach (var ticket in Model.SlaBreachTickets.Take(10))
-            {
-                <div class="ticket-item">
-                    <span class="ticket-id">#@ticket.Number</span>
-                    <span class="ticket-title">@ticket.Title</span>
-                    <span class="ticket-time">@ticket.TimeRemaining</span>
-                </div>
-            }
+            <table class="ticket-table">
+                <thead>
+                    <tr>
+                        <th>Ticket #</th>
+                        <th>Title</th>
+                        <th>Priority</th>
+                        <th>Time Overdue</th>
+                        <th>Created</th>
+                        <th>Escalation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ticket in Model.SlaBreachTickets)
+                    {
+                        <tr data-ticket-number="@ticket.Number" data-ticket-title="@ticket.Title">
+                            <td>
+                                <a href="#" class="ticket-number" onclick="openZammadTicket(@ticket.Id); return false;">
+                                    #@ticket.Number
+                                    <span>🔗</span>
+                                </a>
+                            </td>
+                            <td class="ticket-title-cell">@ticket.Title</td>
+                            <td><span class="priority-badge priority-@ticket.PriorityId">P@ticket.PriorityId</span></td>
+                            <td><span class="time-badge overdue">@ticket.TimeRemaining</span></td>
+                            <td>@ticket.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>@(ticket.EscalationAt?.ToString("yyyy-MM-dd HH:mm") ?? "N/A")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         }
         else
         {
@@ -285,19 +445,52 @@
     </div>
 </div>
 
-<div class="ticket-list-section">
-    <h2>⚠️ SLA At Risk Tickets</h2>
+<!-- SLA At Risk Tickets Section -->
+<div class="ticket-list-section" id="riskSection">
+    <div class="ticket-list-header">
+        <h2 class="collapse-toggle" onclick="toggleSection('riskTickets')">
+            <span class="collapse-icon" id="riskIcon">▼</span>
+            ⚠️ SLA At Risk Tickets 
+            <span class="ticket-count-badge" id="riskCount">@Model.SlaAtRiskTickets.Count</span>
+        </h2>
+        <div class="ticket-controls">
+            <input type="text" class="ticket-search" id="riskSearch" placeholder="Search tickets..." onkeyup="filterTickets('riskTickets', 'riskSearch')">
+            <button class="btn btn-export" onclick="exportToCSV('riskTickets', 'SLA_AtRisk_Tickets')">📥 Export</button>
+        </div>
+    </div>
     <div id="riskTickets">
         @if (Model.SlaAtRiskTickets.Any())
         {
-            foreach (var ticket in Model.SlaAtRiskTickets.Take(10))
-            {
-                <div class="ticket-item">
-                    <span class="ticket-id">#@ticket.Number</span>
-                    <span class="ticket-title">@ticket.Title</span>
-                    <span class="ticket-time">@ticket.TimeRemaining</span>
-                </div>
-            }
+            <table class="ticket-table">
+                <thead>
+                    <tr>
+                        <th>Ticket #</th>
+                        <th>Title</th>
+                        <th>Priority</th>
+                        <th>Time Remaining</th>
+                        <th>Created</th>
+                        <th>Escalation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ticket in Model.SlaAtRiskTickets)
+                    {
+                        <tr data-ticket-number="@ticket.Number" data-ticket-title="@ticket.Title">
+                            <td>
+                                <a href="#" class="ticket-number" onclick="openZammadTicket(@ticket.Id); return false;">
+                                    #@ticket.Number
+                                    <span>🔗</span>
+                                </a>
+                            </td>
+                            <td class="ticket-title-cell">@ticket.Title</td>
+                            <td><span class="priority-badge priority-@ticket.PriorityId">P@ticket.PriorityId</span></td>
+                            <td><span class="time-badge warning">@ticket.TimeRemaining</span></td>
+                            <td>@ticket.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>@(ticket.EscalationAt?.ToString("yyyy-MM-dd HH:mm") ?? "N/A")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         }
         else
         {
@@ -306,23 +499,106 @@
     </div>
 </div>
 
-<div class="ticket-list-section">
-    <h2>🔥 Priority 1 Tickets</h2>
+<!-- Priority 1 Tickets Section -->
+<div class="ticket-list-section" id="p1Section">
+    <div class="ticket-list-header">
+        <h2 class="collapse-toggle" onclick="toggleSection('p1Tickets')">
+            <span class="collapse-icon" id="p1Icon">▼</span>
+            🔥 Priority 1 Tickets 
+            <span class="ticket-count-badge" id="p1Count">@Model.P1Tickets.Count</span>
+        </h2>
+        <div class="ticket-controls">
+            <input type="text" class="ticket-search" id="p1Search" placeholder="Search tickets..." onkeyup="filterTickets('p1Tickets', 'p1Search')">
+            <button class="btn btn-export" onclick="exportToCSV('p1Tickets', 'P1_Tickets')">📥 Export</button>
+        </div>
+    </div>
     <div id="p1Tickets">
         @if (Model.P1Tickets.Any())
         {
-            foreach (var ticket in Model.P1Tickets.Take(10))
-            {
-                <div class="ticket-item">
-                    <span class="ticket-id">#@ticket.Number</span>
-                    <span class="ticket-title">@ticket.Title</span>
-                    <span class="ticket-time">@ticket.TimeRemaining</span>
-                </div>
-            }
+            <table class="ticket-table">
+                <thead>
+                    <tr>
+                        <th>Ticket #</th>
+                        <th>Title</th>
+                        <th>Age</th>
+                        <th>Created</th>
+                        <th>Escalation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ticket in Model.P1Tickets)
+                    {
+                        <tr data-ticket-number="@ticket.Number" data-ticket-title="@ticket.Title">
+                            <td>
+                                <a href="#" class="ticket-number" onclick="openZammadTicket(@ticket.Id); return false;">
+                                    #@ticket.Number
+                                    <span>🔗</span>
+                                </a>
+                            </td>
+                            <td class="ticket-title-cell">@ticket.Title</td>
+                            <td><span class="time-badge normal">@ticket.TimeRemaining</span></td>
+                            <td>@ticket.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>@(ticket.EscalationAt?.ToString("yyyy-MM-dd HH:mm") ?? "N/A")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         }
         else
         {
             <div class="empty-state">No P1 tickets 🎉</div>
+        }
+    </div>
+</div>
+
+<!-- Tickets Open > 48 Hours Section -->
+<div class="ticket-list-section" id="aging48Section">
+    <div class="ticket-list-header">
+        <h2 class="collapse-toggle" onclick="toggleSection('aging48Tickets')">
+            <span class="collapse-icon" id="aging48Icon">▼</span>
+            ⏰ Tickets Open > 48 Hours 
+            <span class="ticket-count-badge" id="aging48Count">@Model.Tickets48HoursPlus.Count</span>
+        </h2>
+        <div class="ticket-controls">
+            <input type="text" class="ticket-search" id="aging48Search" placeholder="Search tickets..." onkeyup="filterTickets('aging48Tickets', 'aging48Search')">
+            <button class="btn btn-export" onclick="exportToCSV('aging48Tickets', 'Aging_Tickets')">📥 Export</button>
+        </div>
+    </div>
+    <div id="aging48Tickets">
+        @if (Model.Tickets48HoursPlus.Any())
+        {
+            <table class="ticket-table">
+                <thead>
+                    <tr>
+                        <th>Ticket #</th>
+                        <th>Title</th>
+                        <th>Priority</th>
+                        <th>Age</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ticket in Model.Tickets48HoursPlus)
+                    {
+                        <tr data-ticket-number="@ticket.Number" data-ticket-title="@ticket.Title">
+                            <td>
+                                <a href="#" class="ticket-number" onclick="openZammadTicket(@ticket.Id); return false;">
+                                    #@ticket.Number
+                                    <span>🔗</span>
+                                </a>
+                            </td>
+                            <td class="ticket-title-cell">@ticket.Title</td>
+                            <td><span class="priority-badge priority-@ticket.PriorityId">P@ticket.PriorityId</span></td>
+                            <td><span class="time-badge normal">@ticket.TimeRemaining</span></td>
+                            <td>@ticket.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="empty-state">No aging tickets 🎉</div>
         }
     </div>
 </div>
@@ -333,20 +609,97 @@
 
 @section Scripts {
     <script>
-        const REFRESH_INTERVAL = 60000; // 60 seconds
+        const REFRESH_INTERVAL = 60000;
+        const ZAMMAD_URL = '@(ViewBag.ZammadUrl ?? "https://paratus.zammad.com")';
         let countdownTimer;
         let refreshTimer;
 
-        // Fetch fresh metrics
+        function openZammadTicket(ticketId) {
+            const url = `${ZAMMAD_URL}/#ticket/zoom/${ticketId}`;
+            window.open(url, '_blank');
+        }
+
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const icon = document.getElementById(sectionId.replace('Tickets', 'Icon'));
+            
+            if (section.classList.contains('section-collapsed')) {
+                section.classList.remove('section-collapsed');
+                icon.classList.remove('collapsed');
+            } else {
+                section.classList.add('section-collapsed');
+                icon.classList.add('collapsed');
+            }
+        }
+
+        function filterTickets(tableId, searchId) {
+            const input = document.getElementById(searchId);
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById(tableId).querySelector('.ticket-table');
+            
+            if (!table) return;
+            
+            const rows = table.getElementsByTagName('tr');
+            
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                const number = row.getAttribute('data-ticket-number') || '';
+                const title = row.getAttribute('data-ticket-title') || '';
+                
+                if (number.toLowerCase().includes(filter) || title.toLowerCase().includes(filter)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        }
+
+        function exportToCSV(tableId, filename) {
+            const table = document.getElementById(tableId).querySelector('.ticket-table');
+            if (!table) {
+                alert('No data to export');
+                return;
+            }
+
+            let csv = [];
+            const rows = table.querySelectorAll('tr');
+            
+            for (let row of rows) {
+                const cols = row.querySelectorAll('td, th');
+                const csvRow = [];
+                
+                for (let col of cols) {
+                    csvRow.push('"' + col.innerText.replace(/"/g, '""') + '"');
+                }
+                
+                csv.push(csvRow.join(','));
+            }
+
+            const csvContent = csv.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', filename + '_' + new Date().toISOString().split('T')[0] + '.csv');
+            a.click();
+        }
+
         async function fetchMetrics() {
             try {
                 document.getElementById('loadingOverlay').classList.add('active');
-
+                
                 const response = await fetch('/api/DashboardApi/metrics');
                 const data = await response.json();
-
+                
                 updateDashboard(data);
-
+                
                 document.getElementById('loadingOverlay').classList.remove('active');
             } catch (error) {
                 console.error('Error fetching metrics:', error);
@@ -354,7 +707,6 @@
             }
         }
 
-        // Update dashboard with new data
         function updateDashboard(data) {
             document.getElementById('slaBreaches').textContent = data.slaBreaches;
             document.getElementById('slaAtRisk').textContent = data.slaAtRisk;
@@ -362,39 +714,103 @@
             document.getElementById('open48Hours').textContent = data.ticketsOpenMoreThan48Hours;
             document.getElementById('todayTickets').textContent = data.todayTicketCount;
             document.getElementById('yesterdayTickets').textContent = data.yesterdayTicketCount;
-
+            
+            document.getElementById('breachCount').textContent = data.slaBreachTickets.length;
+            document.getElementById('riskCount').textContent = data.slaAtRiskTickets.length;
+            document.getElementById('p1Count').textContent = data.p1Tickets.length;
+            document.getElementById('aging48Count').textContent = data.tickets48HoursPlus.length;
+            
             const change = data.ticketChange;
             const changePercent = Math.abs(data.changePercent).toFixed(1);
             const trendClass = change > 0 ? 'up' : change < 0 ? 'down' : 'neutral';
             const trendSymbol = change > 0 ? '↑' : change < 0 ? '↓' : '→';
-
-            document.getElementById('trendIndicator').innerHTML =
+            
+            document.getElementById('trendIndicator').innerHTML = 
                 `<span class="trend ${trendClass}">${trendSymbol} ${Math.abs(change)} (${changePercent}%)</span>`;
-
-            document.getElementById('lastUpdated').textContent =
+            
+            document.getElementById('lastUpdated').textContent = 
                 new Date(data.lastUpdated).toLocaleString();
-
-            // Update ticket lists
-            updateTicketList('breachTickets', data.slaBreachTickets);
-            updateTicketList('riskTickets', data.slaAtRiskTickets);
-            updateTicketList('p1Tickets', data.p1Tickets);
+            
+            updateTicketTable('breachTickets', data.slaBreachTickets, 'breach');
+            updateTicketTable('riskTickets', data.slaAtRiskTickets, 'risk');
+            updateTicketTable('p1Tickets', data.p1Tickets, 'p1');
+            updateTicketTable('aging48Tickets', data.tickets48HoursPlus, 'aging');
         }
 
-        function updateTicketList(elementId, tickets) {
-            const container = document.getElementById(elementId);
-
+        function updateTicketTable(containerId, tickets, type) {
+            const container = document.getElementById(containerId);
+            
             if (!tickets || tickets.length === 0) {
                 container.innerHTML = '<div class="empty-state">No tickets in this category 🎉</div>';
                 return;
             }
 
-            container.innerHTML = tickets.slice(0, 10).map(ticket => `
-                <div class="ticket-item">
-                    <span class="ticket-id">#${ticket.number}</span>
-                    <span class="ticket-title">${ticket.title}</span>
-                    <span class="ticket-time">${ticket.timeRemaining}</span>
-                </div>
-            `).join('');
+            let tableHTML = '<table class="ticket-table"><thead><tr>';
+
+            if (type === 'breach') {
+                tableHTML += '<th>Ticket #</th><th>Title</th><th>Priority</th><th>Time Overdue</th><th>Created</th><th>Escalation</th>';
+            } else if (type === 'risk') {
+                tableHTML += '<th>Ticket #</th><th>Title</th><th>Priority</th><th>Time Remaining</th><th>Created</th><th>Escalation</th>';
+            } else if (type === 'p1') {
+                tableHTML += '<th>Ticket #</th><th>Title</th><th>Age</th><th>Created</th><th>Escalation</th>';
+            } else if (type === 'aging') {
+                tableHTML += '<th>Ticket #</th><th>Title</th><th>Priority</th><th>Age</th><th>Created</th>';
+            }
+
+            tableHTML += '</tr></thead><tbody>';
+
+            tickets.forEach(ticket => {
+                const createdDate = new Date(ticket.createdAt).toLocaleString('sv-SE', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }).replace(' ', ' ');
+
+                const escalationDate = ticket.escalationDate
+                    ? new Date(ticket.escalationDate).toLocaleString('sv-SE', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    }).replace(' ', ' ')
+                    : 'N/A';
+
+                    tableHTML += `<tr data-ticket-number="${ticket.number}" data-ticket-title="${ticket.title}">`;
+                    tableHTML += `<td>
+                                <a href="#" class="ticket-number" onclick="openZammadTicket(${ticket.id}); return false;">
+                                    #${ticket.number}
+                                    <span>🔗</span>
+                                </a>
+                              </td>`;
+                    tableHTML += `<td class="ticket-title-cell">${ticket.title}</td>`;
+                       if (type === 'breach') {
+                    tableHTML += `<td><span class="priority-badge priority-${ticket.priorityId}">P${ticket.priorityId}</span></td>`;
+                    tableHTML += `<td><span class="time-badge overdue">${ticket.timeRemaining}</span></td>`;
+                    tableHTML += `<td>${createdDate}</td>`;
+                    tableHTML += `<td>${escalationDate}</td>`;
+                } else if (type === 'risk') {
+                    tableHTML += `<td><span class="priority-badge priority-${ticket.priorityId}">P${ticket.priorityId}</span></td>`;
+                    tableHTML += `<td><span class="time-badge warning">${ticket.timeRemaining}</span></td>`;
+                    tableHTML += `<td>${createdDate}</td>`;
+                    tableHTML += `<td>${escalationDate}</td>`;
+                } else if (type === 'p1') {
+                    tableHTML += `<td><span class="time-badge normal">${ticket.timeRemaining}</span></td>`;
+                    tableHTML += `<td>${createdDate}</td>`;
+                    tableHTML += `<td>${escalationDate}</td>`;
+                } else if (type === 'aging') {
+                    tableHTML += `<td><span class="priority-badge priority-${ticket.priorityId}">P${ticket.priorityId}</span></td>`;
+                    tableHTML += `<td><span class="time-badge normal">${ticket.timeRemaining}</span></td>`;
+                    tableHTML += `<td>${createdDate}</td>`;
+                }
+
+                tableHTML += '</tr>';
+            });
+
+            tableHTML += '</tbody></table>';
+            container.innerHTML = tableHTML;
         }
 
         // Countdown timer
@@ -421,5 +837,6 @@
         startAutoRefresh();
 
         console.log('Dashboard initialized. Auto-refresh every 60 seconds.');
+        console.log('Zammad URL:', ZAMMAD_URL);
     </script>
-}
+    }

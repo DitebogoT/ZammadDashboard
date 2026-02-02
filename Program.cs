@@ -10,7 +10,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.Configure<ZammadConfig>(builder.Configuration.GetSection("Zammad"));
 
 //Register Zammad Dashboard Service
-builder.Services.AddSingleton<ZammadDashboardService, ZammadDashboardService>();
+builder.Services.AddSingleton<IZammadDashboardService, ZammadDashboardService>();
 
 builder.Services.AddMemoryCache();
 
