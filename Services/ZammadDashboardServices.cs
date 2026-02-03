@@ -23,7 +23,7 @@ namespace ZammadDashboard.Services
         {
             _config = config.Value;
             _logger = logger;
-
+            
             try
             {
                 _account = ZammadAccount.CreateBasicAccount(
@@ -51,7 +51,7 @@ namespace ZammadDashboard.Services
             try
             {
                 _logger.LogInformation("Fetching dashboard metrics...");
-
+                
                 // Get all open tickets
                 var openTickets = await GetAllOpenTicketsAsync();
                 _logger.LogInformation("Found {Count} open tickets", openTickets.Count);
@@ -60,11 +60,19 @@ namespace ZammadDashboard.Services
                 CalculateSlaMetrics(openTickets, metrics);
                 CalculateP1Tickets(openTickets, metrics);
                 Calculate48HourTickets(openTickets, metrics);
+                
+                // NEW: Calculate P1 on-hold/awaiting tickets
+                CalculateP1OnHoldTickets(openTickets, metrics);
+                
+                // NEW: Calculate today's tickets and closed tickets
+                await CalculateTodayTickets(metrics);
+                await CalculateTodayClosedTickets(metrics);
                 await CalculateTodayYesterdayTickets(metrics);
 
                 _logger.LogInformation(
-                    "Metrics calculated - Breaches: {Breaches}, At Risk: {AtRisk}, P1: {P1}, 48hr+: {Hours48}",
-                    metrics.SlaBreaches, metrics.SlaAtRisk, metrics.OpenP1Tickets, metrics.TicketsOpenMoreThan48Hours
+                    "Metrics calculated - Breaches: {Breaches}, At Risk: {AtRisk}, P1: {P1}, P1 On Hold: {OnHold}, 48hr+: {Hours48}, Today Closed: {Closed}",
+                    metrics.SlaBreaches, metrics.SlaAtRisk, metrics.OpenP1Tickets, metrics.P1OnHoldCount, 
+                    metrics.TicketsOpenMoreThan48Hours, metrics.TodayClosedCount
                 );
 
                 return metrics;
@@ -94,18 +102,18 @@ namespace ZammadDashboard.Services
                 // Fallback: get all tickets and filter
                 _logger.LogWarning("Search returned no results, falling back to GetTicketListAsync");
                 var allTickets = await _ticketClient.GetTicketListAsync();
-                return allTickets?.Where(t => t.StateId != _config.ClosedStateId).ToList()
+                return allTickets?.Where(t => t.StateId != _config.ClosedStateId).ToList() 
                     ?? new List<Ticket>();
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error fetching open tickets");
-
+                
                 // Last resort fallback
                 try
                 {
                     var allTickets = await _ticketClient.GetTicketListAsync();
-                    return allTickets?.Where(t => t.StateId != _config.ClosedStateId).ToList()
+                    return allTickets?.Where(t => t.StateId != _config.ClosedStateId).ToList() 
                         ?? new List<Ticket>();
                 }
                 catch (Exception ex2)
@@ -127,7 +135,7 @@ namespace ZammadDashboard.Services
                 // Check for overall escalation time
                 if (ticket.EscalationAt.HasValue)
                 {
-                    escalationTime = ticket.EscalationAt.Value.UtcDateTime;
+                    escalationTime = ticket.EscalationAt?.UtcDateTime;
                 }
                 // Check individual SLA fields
                 else if (ticket.FirstResponseEscalationAt.HasValue ||
@@ -141,16 +149,7 @@ namespace ZammadDashboard.Services
                 {
                     var timeUntilEscalation = escalationTime.Value - now;
 
-                    var ticketInfo = new TicketInfo
-                    {
-                        Id = ticket.Id,
-                        Number = ticket.Number,
-                        Title = ticket.Title,
-                        EscalationAt = escalationTime,
-                        CreatedAt = ticket.CreatedAt.UtcDateTime,
-                        PriorityId = ticket.PriorityId ?? 0,
-                        StateId = ticket.StateId ?? 0,
-                    };
+                    var ticketInfo = CreateTicketInfo(ticket);
 
                     // SLA already breached
                     if (timeUntilEscalation.TotalMinutes < 0)
@@ -182,7 +181,7 @@ namespace ZammadDashboard.Services
             {
                 ticket.FirstResponseEscalationAt?.UtcDateTime,
                 ticket.UpdateEscalationAt?.UtcDateTime,
-                ticket.CloseEscalationAt ?.UtcDateTime
+                ticket.CloseEscalationAt?.UtcDateTime
             };
 
             return escalations
@@ -198,19 +197,41 @@ namespace ZammadDashboard.Services
 
             foreach (var ticket in p1Tickets)
             {
-                var ticketInfo = new TicketInfo
-                {
-                    Id = ticket.Id,
-                    Number = ticket.Number,
-                    Title = ticket.Title,
-                    EscalationAt = ticket.EscalationAt?.UtcDateTime,
-                    CreatedAt = ticket.CreatedAt.UtcDateTime,
-                    PriorityId = ticket.PriorityId ?? 0,
-                    StateId = ticket.StateId ?? 0,
-                    TimeRemaining = GetAgeString(ticket.CreatedAt.UtcDateTime)
-                };
+                var ticketInfo = CreateTicketInfo(ticket);
+                ticketInfo.TimeRemaining = GetAgeString(ticket.CreatedAt.UtcDateTime);
                 metrics.P1Tickets.Add(ticketInfo);
             }
+        }
+
+        // NEW: Calculate P1 tickets that are on hold or awaiting
+        private void CalculateP1OnHoldTickets(List<Ticket> openTickets, DashboardMetrics metrics)
+        {
+            var onHoldStateIds = new List<int> 
+            { 
+                _config.OnHoldStateId, 
+                _config.PendingReminderStateId,
+                _config.PendingCloseStateId
+            };
+
+            var p1OnHoldTickets = openTickets
+                .Where(t => t.PriorityId == _config.P1PriorityId && 
+                           onHoldStateIds.Contains(t.StateId ?? 0))
+                .ToList();
+
+            metrics.P1OnHoldCount = p1OnHoldTickets.Count;
+
+            foreach (var ticket in p1OnHoldTickets)
+            {
+                var ticketInfo = CreateTicketInfo(ticket);
+                ticketInfo.TimeRemaining = GetAgeString(ticket.CreatedAt.UtcDateTime);
+                metrics.P1OnHoldTickets.Add(ticketInfo);
+            }
+
+            _logger.LogInformation(
+                "Found {Count} P1 tickets on hold/awaiting (State IDs: {States})",
+                metrics.P1OnHoldCount,
+                string.Join(", ", onHoldStateIds)
+            );
         }
 
         private void Calculate48HourTickets(List<Ticket> openTickets, DashboardMetrics metrics)
@@ -221,18 +242,122 @@ namespace ZammadDashboard.Services
 
             foreach (var ticket in oldTickets)
             {
-                var ticketInfo = new TicketInfo
-                {
-                    Id = ticket.Id,
-                    Number = ticket.Number,
-                    Title = ticket.Title,
-                    EscalationAt = ticket.EscalationAt?.UtcDateTime,
-                    CreatedAt = ticket.CreatedAt.UtcDateTime,
-                    PriorityId = ticket.PriorityId ?? 0,
-                    StateId = ticket.StateId ?? 0,
-                    TimeRemaining = GetAgeString(ticket.CreatedAt.UtcDateTime)
-                };
+                var ticketInfo = CreateTicketInfo(ticket);
+                ticketInfo.TimeRemaining = GetAgeString(ticket.CreatedAt.UtcDateTime);
                 metrics.Tickets48HoursPlus.Add(ticketInfo);
+            }
+        }
+
+        // NEW: Get all tickets created today with full details
+        private async Task CalculateTodayTickets(DashboardMetrics metrics)
+        {
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+
+            try
+            {
+                var todayStart = today.ToString("yyyy-MM-dd");
+                var todayEnd = tomorrow.ToString("yyyy-MM-dd");
+                
+                var todayTickets = await _ticketClient.SearchTicketAsync(
+                    $"created_at:[{todayStart} TO {todayEnd}]",
+                    1000
+                );
+
+                if (todayTickets != null && todayTickets.Any())
+                {
+                    metrics.TodayTicketCount = todayTickets.Count;
+                    
+                    foreach (var ticket in todayTickets.OrderByDescending(t => t.CreatedAt))
+                    {
+                        var ticketInfo = CreateTicketInfo(ticket);
+                        ticketInfo.TimeRemaining = GetAgeString(ticket.CreatedAt.UtcDateTime);
+                        metrics.TodayAllTickets.Add(ticketInfo);
+                    }
+
+                    _logger.LogInformation("Found {Count} tickets created today", metrics.TodayTicketCount);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching today's tickets");
+            }
+        }
+
+        // NEW: Get all tickets closed today
+        private async Task CalculateTodayClosedTickets(DashboardMetrics metrics)
+        {
+            var today = DateTime.Today;
+            var tomorrow = today.AddDays(1);
+
+            try
+            {
+                var todayStart = today.ToString("yyyy-MM-dd");
+                var todayEnd = tomorrow.ToString("yyyy-MM-dd");
+                
+                // Search for tickets closed today
+                var closedTickets = await _ticketClient.SearchTicketAsync(
+                    $"close_at:[{todayStart} TO {todayEnd}]",
+                    1000
+                );
+
+                if (closedTickets != null && closedTickets.Any())
+                {
+                    metrics.TodayClosedCount = closedTickets.Count;
+                    
+                    foreach (var ticket in closedTickets.OrderByDescending(t => t.CloseAt))
+                    {
+                        var ticketInfo = CreateTicketInfo(ticket);
+                        
+                        // Calculate resolution time
+                        if (ticket.CloseAt.HasValue)
+                        {
+                            var resolutionTime = ticket.CloseAt.Value - ticket.CreatedAt;
+                            ticketInfo.TimeRemaining = FormatResolutionTime(resolutionTime);
+                        }
+                        
+                        metrics.TodayClosedTickets.Add(ticketInfo);
+                    }
+
+                    _logger.LogInformation("Found {Count} tickets closed today", metrics.TodayClosedCount);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching today's closed tickets");
+                
+                // Fallback: filter from all tickets
+                try
+                {
+                    var allTickets = await _ticketClient.GetTicketListAsync();
+                    var closedToday = allTickets?
+                        .Where(t => t.StateId == _config.ClosedStateId && 
+                                   t.CloseAt.HasValue && 
+                                   t.CloseAt.Value.Date == today)
+                        .ToList();
+
+                    if (closedToday != null && closedToday.Any())
+                    {
+                        metrics.TodayClosedCount = closedToday.Count;
+                        
+                        foreach (var ticket in closedToday.OrderByDescending(t => t.CloseAt))
+                        {
+                            var ticketInfo = CreateTicketInfo(ticket);
+                            
+                            if (ticket.CloseAt.HasValue)
+                            {
+                                var resolutionTime = ticket.CloseAt.Value - ticket.CreatedAt;
+                                ticketInfo.TimeRemaining = FormatResolutionTime(resolutionTime);
+                            }
+                            
+                            metrics.TodayClosedTickets.Add(ticketInfo);
+                        }
+                    }
+                }
+                catch (Exception ex2)
+                {
+                    _logger.LogError(ex2, "Fallback for closed tickets also failed");
+                }
             }
         }
 
@@ -243,14 +368,17 @@ namespace ZammadDashboard.Services
 
             try
             {
-                // Search for today's tickets
-                var todayStart = today.ToString("yyyy-MM-dd");
-                var todayEnd = today.AddDays(1).ToString("yyyy-MM-dd");
-                var todayTickets = await _ticketClient.SearchTicketAsync(
-                    $"created_at:[{todayStart} TO {todayEnd}]",
-                    1000
-                );
-                metrics.TodayTicketCount = todayTickets?.Count ?? 0;
+                // If we already got today's count from CalculateTodayTickets, skip
+                if (metrics.TodayTicketCount == 0)
+                {
+                    var todayStart = today.ToString("yyyy-MM-dd");
+                    var todayEnd = today.AddDays(1).ToString("yyyy-MM-dd");
+                    var todayTickets = await _ticketClient.SearchTicketAsync(
+                        $"created_at:[{todayStart} TO {todayEnd}]",
+                        1000
+                    );
+                    metrics.TodayTicketCount = todayTickets?.Count ?? 0;
+                }
 
                 // Search for yesterday's tickets
                 var yesterdayStart = yesterday.ToString("yyyy-MM-dd");
@@ -264,19 +392,59 @@ namespace ZammadDashboard.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error calculating daily tickets");
-
-                // Fallback: count from all tickets
-                try
-                {
-                    var allTickets = await _ticketClient.GetTicketListAsync();
-                    metrics.TodayTicketCount = allTickets?.Count(t => t.CreatedAt.Date == today) ?? 0;
-                    metrics.YesterdayTicketCount = allTickets?.Count(t => t.CreatedAt.Date == yesterday) ?? 0;
-                }
-                catch (Exception ex2)
-                {
-                    _logger.LogError(ex2, "Fallback calculation also failed");
-                }
             }
+        }
+
+        // Helper method to create TicketInfo with all details
+        private TicketInfo CreateTicketInfo(Ticket ticket)
+        {
+            return new TicketInfo
+            {
+                Id = ticket.Id,
+                Number = ticket.Number,
+                Title = ticket.Title,
+                EscalationAt = ticket.EscalationAt?.UtcDateTime,
+                CreatedAt = ticket.CreatedAt.UtcDateTime,
+                UpdatedAt = ticket.UpdatedAt.UtcDateTime,
+                CloseAt = ticket.CloseAt?.UtcDateTime,
+                PriorityId = ticket.PriorityId ?? 0,
+                StateId = ticket.StateId ?? 0,
+                CustomerId = ticket.CustomerId,
+                GroupId = ticket.GroupId,
+                OwnerId = ticket.OwnerId,
+                // Note: Zammad.Client may not have these name fields directly
+                // You might need to make separate API calls to get names
+                PriorityName = GetPriorityName(ticket.PriorityId ?? 0),
+                StateName = GetStateName(ticket.StateId ?? 0)
+            };
+        }
+
+        private string GetPriorityName(int priorityId)
+        {
+            // Map priority IDs to names based on standard Zammad setup
+            return priorityId switch
+            {
+                1 => "Critical",
+                2 => "High",
+                3 => "Normal",
+                4 => "Low",
+                _ => $"Priority {priorityId}"
+            };
+        }
+
+        private string GetStateName(int stateId)
+        {
+            // Map state IDs to names based on standard Zammad setup
+            return stateId switch
+            {
+                1 => "New",
+                2 => "Open",
+                3 => "Pending Reminder",
+                4 => "Closed",
+                6 => "Pending Close",
+                7 => "Waiting for Customer",
+                _ => $"State {stateId}"
+            };
         }
 
         private string GetAgeString(DateTime createdAt)
@@ -289,6 +457,16 @@ namespace ZammadDashboard.Services
                 return $"{(int)age.TotalHours}h {age.Minutes}m";
             else
                 return $"{(int)age.TotalMinutes}m";
+        }
+
+        private string FormatResolutionTime(TimeSpan resolutionTime)
+        {
+            if (resolutionTime.TotalDays >= 1)
+                return $"Resolved in {(int)resolutionTime.TotalDays}d {resolutionTime.Hours}h";
+            else if (resolutionTime.TotalHours >= 1)
+                return $"Resolved in {(int)resolutionTime.TotalHours}h {resolutionTime.Minutes}m";
+            else
+                return $"Resolved in {(int)resolutionTime.TotalMinutes}m";
         }
     }
 }

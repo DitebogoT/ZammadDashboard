@@ -9,6 +9,12 @@
         public int SlaWarningThresholdMinutes { get; set; } = 60;
         public int P1PriorityId { get; set; } = 1;
         public int ClosedStateId { get; set; } = 4;
+
+        // NEW: State IDs for on-hold/awaiting
+        public int OnHoldStateId { get; set; } = 3;
+        public int PendingReminderStateId { get; set; } = 6;
+        public int PendingCloseStateId { get; set; } = 7;
+
         public int CacheExpirationSeconds { get; set; } = 30;
     }
 }
