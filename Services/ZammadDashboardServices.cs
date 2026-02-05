@@ -424,10 +424,10 @@ namespace ZammadDashboard.Services
             // Map priority IDs to names based on standard Zammad setup
             return priorityId switch
             {
-                1 => "Critical",
-                2 => "High",
-                3 => "Normal",
-                4 => "Low",
+                1 => "P1",
+                2 => "P2",
+                3 => "P3",
+                4 => "P4",
                 _ => $"Priority {priorityId}"
             };
         }
@@ -437,12 +437,19 @@ namespace ZammadDashboard.Services
             // Map state IDs to names based on standard Zammad setup
             return stateId switch
             {
-                1 => "New",
-                2 => "Open",
-                3 => "Pending Reminder",
-                4 => "Closed",
-                6 => "Pending Close",
-                7 => "Waiting for Customer",
+                1 => "Assigned",
+                2 => "Awaiting",
+                3 => "Cancelled",
+                4 => "Resolved",
+                5 => "Escalation",
+                6 => "In Progress",
+                7 => "Investigation",
+                8 => "Notification",
+                9 => "On Hold",
+                10 => "Open",
+                11 => "Pending Close",
+                12 => "Notification",
+                13 => "Resolved",
                 _ => $"State {stateId}"
             };
         }

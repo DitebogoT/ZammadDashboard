@@ -18,15 +18,73 @@
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-        .dashboard-header h1 {
-            color: #1e3c72;
-            margin: 0 0 10px 0;
-            font-size: 32px;
-        }
+    .dashboard-header h1 {
+        color: #1e3c72;
+        margin: 0 0 10px 0;
+        font-size: 32px;
+    }
+
+    .header-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 15px;
+    }
 
     .last-updated {
         color: #666;
         font-size: 14px;
+    }
+
+    .export-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-export {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+    }
+
+    .btn-export-excel {
+        background: #217346;
+        color: white;
+    }
+
+    .btn-export-excel:hover {
+        background: #1a5c37;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(33, 115, 70, 0.3);
+    }
+
+    .btn-export-pdf {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-export-pdf:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+    }
+
+    .btn-export-csv {
+        background: #0d6efd;
+        color: white;
+    }
+
+    .btn-export-csv:hover {
+        background: #0b5ed7;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
     }
 
     .metrics-grid {
@@ -45,38 +103,18 @@
         border-left: 5px solid #ccc;
     }
 
-        .metric-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-        }
+    .metric-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
 
-        .metric-card.critical {
-            border-left-color: #dc3545;
-        }
-
-        .metric-card.warning {
-            border-left-color: #ffc107;
-        }
-
-        .metric-card.priority {
-            border-left-color: #e83e8c;
-        }
-
-        .metric-card.info {
-            border-left-color: #17a2b8;
-        }
-
-        .metric-card.success {
-            border-left-color: #28a745;
-        }
-
-        .metric-card.purple {
-            border-left-color: #6f42c1;
-        }
-
-        .metric-card.orange {
-            border-left-color: #fd7e14;
-        }
+    .metric-card.critical { border-left-color: #dc3545; }
+    .metric-card.warning { border-left-color: #ffc107; }
+    .metric-card.priority { border-left-color: #e83e8c; }
+    .metric-card.info { border-left-color: #17a2b8; }
+    .metric-card.success { border-left-color: #28a745; }
+    .metric-card.purple { border-left-color: #6f42c1; }
+    .metric-card.orange { border-left-color: #fd7e14; }
 
     .metric-icon {
         font-size: 36px;
@@ -114,20 +152,20 @@
         margin-top: 10px;
     }
 
-        .trend.up {
-            background: #fee;
-            color: #dc3545;
-        }
+    .trend.up {
+        background: #fee;
+        color: #dc3545;
+    }
 
-        .trend.down {
-            background: #efe;
-            color: #28a745;
-        }
+    .trend.down {
+        background: #efe;
+        color: #28a745;
+    }
 
-        .trend.neutral {
-            background: #f0f0f0;
-            color: #666;
-        }
+    .trend.neutral {
+        background: #f0f0f0;
+        color: #666;
+    }
 
     .ticket-list-section {
         background: white;
@@ -137,14 +175,20 @@
         margin-bottom: 20px;
     }
 
-        .ticket-list-section h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+    .ticket-list-section h2 {
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
 
     .ticket-count-badge {
         background: #1e3c72;
@@ -153,6 +197,43 @@
         border-radius: 20px;
         font-size: 14px;
         font-weight: 600;
+    }
+
+    .section-export-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-section-export {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 12px;
+        color: white;
+    }
+
+    .btn-section-export:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .btn-csv {
+        background: #0d6efd;
+    }
+
+    .btn-csv:hover {
+        background: #0b5ed7;
+    }
+
+    .btn-excel {
+        background: #217346;
+    }
+
+    .btn-excel:hover {
+        background: #1a5c37;
     }
 
     .ticket-item {
@@ -165,17 +246,24 @@
         transition: background 0.2s ease;
     }
 
-        .ticket-item:hover {
-            background: #f8f9fa;
-        }
+    .ticket-item:hover {
+        background: #f8f9fa;
+    }
 
-        .ticket-item:last-child {
-            border-bottom: none;
-        }
+    .ticket-item:last-child {
+        border-bottom: none;
+    }
 
     .ticket-id {
         font-weight: bold;
         color: #1e3c72;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .ticket-id:hover {
+        color: #2a5298;
+        text-decoration: underline;
     }
 
     .ticket-title {
@@ -190,25 +278,10 @@
         text-align: center;
     }
 
-    .priority-1 {
-        background: #dc3545;
-        color: white;
-    }
-
-    .priority-2 {
-        background: #ffc107;
-        color: #333;
-    }
-
-    .priority-3 {
-        background: #17a2b8;
-        color: white;
-    }
-
-    .priority-4 {
-        background: #6c757d;
-        color: white;
-    }
+    .priority-1 { background: #dc3545; color: white; }
+    .priority-2 { background: #ffc107; color: #333; }
+    .priority-3 { background: #17a2b8; color: white; }
+    .priority-4 { background: #6c757d; color: white; }
 
     .ticket-state {
         padding: 4px 8px;
@@ -259,9 +332,9 @@
         align-items: center;
     }
 
-        .loading-overlay.active {
-            display: flex;
-        }
+    .loading-overlay.active {
+        display: flex;
+    }
 
     .spinner {
         border: 4px solid #f3f3f3;
@@ -273,13 +346,8 @@
     }
 
     @@keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(360deg);
-        }
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
 
     @@media (max-width: 1200px) {
@@ -287,9 +355,52 @@
             grid-template-columns: 1fr;
             gap: 8px;
         }
-
+        
         .ticket-time {
             text-align: left;
+        }
+    }
+
+    /* Print styles for PDF export */
+    @@media print {
+        body {
+            background: white !important;
+            padding: 20px;
+        }
+
+        .refresh-indicator,
+        .loading-overlay,
+        .export-buttons {
+            display: none !important;
+        }
+
+        .dashboard-header {
+            background: white !important;
+            border: 2px solid #1e3c72;
+        }
+
+        .metric-card {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            box-shadow: none;
+            border: 1px solid #ddd;
+        }
+
+        .ticket-list-section {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            box-shadow: none;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+        .ticket-item {
+            page-break-inside: avoid;
+        }
+
+        a {
+            color: #1e3c72 !important;
+            text-decoration: none !important;
         }
     }
 </style>
@@ -300,7 +411,20 @@
 
 <div class="dashboard-header">
     <h1>🎯 IT Support SLA Dashboard</h1>
-    <div class="last-updated">Last updated: <span id="lastUpdated">@Model.LastUpdated.ToString("yyyy-MM-dd HH:mm:ss")</span></div>
+    <div class="header-controls">
+        <div class="last-updated">Last updated: <span id="lastUpdated">@Model.LastUpdated.ToString("yyyy-MM-dd HH:mm:ss")</span></div>
+        <div class="export-buttons">
+            <button class="btn-export btn-export-csv" onclick="exportToCSV()">
+                <span>📄</span> Export CSV
+            </button>
+            <button class="btn-export btn-export-excel" onclick="exportToExcel()">
+                <span>📊</span> Export Excel
+            </button>
+            <button class="btn-export btn-export-pdf" onclick="exportToPDF()">
+                <span>📑</span> Export PDF
+            </button>
+        </div>
+    </div>
 </div>
 
 <div class="metrics-grid">
@@ -365,8 +489,14 @@
 
 <div class="ticket-list-section">
     <h2>
-        <span>🚨 SLA Breach Tickets</span>
-        <span class="ticket-count-badge" id="breachCount">@Model.SlaBreachTickets.Count</span>
+        <div class="section-header">
+            <span>🚨 SLA Breach Tickets</span>
+            <span class="ticket-count-badge" id="breachCount">@Model.SlaBreachTickets.Count</span>
+        </div>
+        <div class="section-export-buttons">
+            <button class="btn-section-export btn-csv" onclick="exportSectionToCSV('slaBreachTickets', 'SLA_Breach_Tickets')">CSV</button>
+            <button class="btn-section-export btn-excel" onclick="exportSectionToExcel('slaBreachTickets', 'SLA_Breach_Tickets')">Excel</button>
+        </div>
     </h2>
     <div id="breachTickets">
         @if (Model.SlaBreachTickets.Any())
@@ -374,7 +504,7 @@
             foreach (var ticket in Model.SlaBreachTickets.Take(10))
             {
                 <div class="ticket-item">
-                    <span class="ticket-id">#@ticket.Number</span>
+                    <a href="@(ViewBag.ZammadUrl)/#ticket/zoom/@ticket.Id" target="_blank" class="ticket-id">#@ticket.Number</a>
                     <span class="ticket-title">@ticket.Title</span>
                     <span class="ticket-priority priority-@ticket.PriorityId">@ticket.PriorityName</span>
                     <span class="ticket-state">@ticket.StateName</span>
@@ -391,8 +521,14 @@
 
 <div class="ticket-list-section">
     <h2>
-        <span>⚠️ SLA At Risk Tickets</span>
-        <span class="ticket-count-badge" id="riskCount">@Model.SlaAtRiskTickets.Count</span>
+        <div class="section-header">
+            <span>⚠️ SLA At Risk Tickets</span>
+            <span class="ticket-count-badge" id="riskCount">@Model.SlaAtRiskTickets.Count</span>
+        </div>
+        <div class="section-export-buttons">
+            <button class="btn-section-export btn-csv" onclick="exportSectionToCSV('slaAtRiskTickets', 'SLA_At_Risk_Tickets')">CSV</button>
+            <button class="btn-section-export btn-excel" onclick="exportSectionToExcel('slaAtRiskTickets', 'SLA_At_Risk_Tickets')">Excel</button>
+        </div>
     </h2>
     <div id="riskTickets">
         @if (Model.SlaAtRiskTickets.Any())
@@ -400,7 +536,7 @@
             foreach (var ticket in Model.SlaAtRiskTickets.Take(10))
             {
                 <div class="ticket-item">
-                    <span class="ticket-id">#@ticket.Number</span>
+                    <a href="@(ViewBag.ZammadUrl)/#ticket/zoom/@ticket.Id" target="_blank" class="ticket-id">#@ticket.Number</a>
                     <span class="ticket-title">@ticket.Title</span>
                     <span class="ticket-priority priority-@ticket.PriorityId">@ticket.PriorityName</span>
                     <span class="ticket-state">@ticket.StateName</span>
@@ -417,8 +553,14 @@
 
 <div class="ticket-list-section">
     <h2>
-        <span>⏸️ P1 Tickets On Hold/Awaiting</span>
-        <span class="ticket-count-badge" id="p1OnHoldCount">@Model.P1OnHoldTickets.Count</span>
+        <div class="section-header">
+            <span>⏸️ P1 Tickets On Hold/Awaiting</span>
+            <span class="ticket-count-badge" id="p1OnHoldCount">@Model.P1OnHoldTickets.Count</span>
+        </div>
+        <div class="section-export-buttons">
+            <button class="btn-section-export btn-csv" onclick="exportSectionToCSV('p1OnHoldTickets', 'P1_On_Hold_Tickets')">CSV</button>
+            <button class="btn-section-export btn-excel" onclick="exportSectionToExcel('p1OnHoldTickets', 'P1_On_Hold_Tickets')">Excel</button>
+        </div>
     </h2>
     <div id="p1OnHoldTickets">
         @if (Model.P1OnHoldTickets.Any())
@@ -426,7 +568,7 @@
             foreach (var ticket in Model.P1OnHoldTickets)
             {
                 <div class="ticket-item">
-                    <span class="ticket-id">#@ticket.Number</span>
+                    <a href="@(ViewBag.ZammadUrl)/#ticket/zoom/@ticket.Id" target="_blank" class="ticket-id">#@ticket.Number</a>
                     <span class="ticket-title">@ticket.Title</span>
                     <span class="ticket-priority priority-@ticket.PriorityId">@ticket.PriorityName</span>
                     <span class="ticket-state">@ticket.StateName</span>
@@ -443,8 +585,14 @@
 
 <div class="ticket-list-section">
     <h2>
-        <span>🔥 Priority 1 Tickets</span>
-        <span class="ticket-count-badge" id="p1Count">@Model.P1Tickets.Count</span>
+        <div class="section-header">
+            <span>🔥 Priority 1 Tickets</span>
+            <span class="ticket-count-badge" id="p1Count">@Model.P1Tickets.Count</span>
+        </div>
+        <div class="section-export-buttons">
+            <button class="btn-section-export btn-csv" onclick="exportSectionToCSV('p1Tickets', 'P1_Tickets')">CSV</button>
+            <button class="btn-section-export btn-excel" onclick="exportSectionToExcel('p1Tickets', 'P1_Tickets')">Excel</button>
+        </div>
     </h2>
     <div id="p1Tickets">
         @if (Model.P1Tickets.Any())
@@ -452,7 +600,7 @@
             foreach (var ticket in Model.P1Tickets.Take(10))
             {
                 <div class="ticket-item">
-                    <span class="ticket-id">#@ticket.Number</span>
+                    <a href="@(ViewBag.ZammadUrl)/#ticket/zoom/@ticket.Id" target="_blank" class="ticket-id">#@ticket.Number</a>
                     <span class="ticket-title">@ticket.Title</span>
                     <span class="ticket-priority priority-@ticket.PriorityId">@ticket.PriorityName</span>
                     <span class="ticket-state">@ticket.StateName</span>
@@ -469,8 +617,50 @@
 
 <div class="ticket-list-section">
     <h2>
-        <span>📋 All Tickets Created Today</span>
-        <span class="ticket-count-badge" id="todayAllCount">@Model.TodayAllTickets.Count</span>
+        <div class="section-header">
+            <span>⏰ Tickets Open > 48 Hours</span>
+            <span class="ticket-count-badge" id="tickets48Count">@Model.Tickets48HoursPlus.Count</span>
+        </div>
+        <div class="section-export-buttons">
+            <button class="btn-section-export btn-csv" onclick="exportSectionToCSV('tickets48HoursPlus', 'Tickets_Open_48_Hours')">CSV</button>
+            <button class="btn-section-export btn-excel" onclick="exportSectionToExcel('tickets48HoursPlus', 'Tickets_Open_48_Hours')">Excel</button>
+        </div>
+    </h2>
+    <div id="tickets48HoursTickets">
+        @if (Model.Tickets48HoursPlus.Any())
+        {
+            foreach (var ticket in Model.Tickets48HoursPlus.Take(20))
+            {
+                <div class="ticket-item">
+                    <a href="@(ViewBag.ZammadUrl)/#ticket/zoom/@ticket.Id" target="_blank" class="ticket-id">#@ticket.Number</a>
+                    <span class="ticket-title">@ticket.Title</span>
+                    <span class="ticket-priority priority-@ticket.PriorityId">@ticket.PriorityName</span>
+                    <span class="ticket-state">@ticket.StateName</span>
+                    <span class="ticket-time">@ticket.TimeRemaining</span>
+                </div>
+            }
+            @if (Model.Tickets48HoursPlus.Count > 20)
+            {
+                <div class="empty-state">... and @(Model.Tickets48HoursPlus.Count - 20) more tickets</div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">No tickets open > 48 hours 🎉</div>
+        }
+    </div>
+</div>
+
+<div class="ticket-list-section">
+    <h2>
+        <div class="section-header">
+            <span>📋 All Tickets Created Today</span>
+            <span class="ticket-count-badge" id="todayAllCount">@Model.TodayAllTickets.Count</span>
+        </div>
+        <div class="section-export-buttons">
+            <button class="btn-section-export btn-csv" onclick="exportSectionToCSV('todayAllTickets', 'Tickets_Created_Today')">CSV</button>
+            <button class="btn-section-export btn-excel" onclick="exportSectionToExcel('todayAllTickets', 'Tickets_Created_Today')">Excel</button>
+        </div>
     </h2>
     <div id="todayAllTickets">
         @if (Model.TodayAllTickets.Any())
@@ -478,7 +668,7 @@
             foreach (var ticket in Model.TodayAllTickets.Take(20))
             {
                 <div class="ticket-item">
-                    <span class="ticket-id">#@ticket.Number</span>
+                    <a href="@(ViewBag.ZammadUrl)/#ticket/zoom/@ticket.Id" target="_blank" class="ticket-id">#@ticket.Number</a>
                     <span class="ticket-title">@ticket.Title</span>
                     <span class="ticket-priority priority-@ticket.PriorityId">@ticket.PriorityName</span>
                     <span class="ticket-state">@ticket.StateName</span>
@@ -499,8 +689,14 @@
 
 <div class="ticket-list-section">
     <h2>
-        <span>✅ Tickets Closed Today</span>
-        <span class="ticket-count-badge" id="todayClosedCount">@Model.TodayClosedTickets.Count</span>
+        <div class="section-header">
+            <span>✅ Tickets Closed Today</span>
+            <span class="ticket-count-badge" id="todayClosedCount">@Model.TodayClosedTickets.Count</span>
+        </div>
+        <div class="section-export-buttons">
+            <button class="btn-section-export btn-csv" onclick="exportSectionToCSV('todayClosedTickets', 'Tickets_Closed_Today')">CSV</button>
+            <button class="btn-section-export btn-excel" onclick="exportSectionToExcel('todayClosedTickets', 'Tickets_Closed_Today')">Excel</button>
+        </div>
     </h2>
     <div id="todayClosedTickets">
         @if (Model.TodayClosedTickets.Any())
@@ -508,14 +704,16 @@
             foreach (var ticket in Model.TodayClosedTickets.Take(20))
             {
                 <div class="ticket-item">
-                    <span class="ticket-id">#@ticket.Number</span>
+                    <a href="@(ViewBag.ZammadUrl)/#ticket/zoom/@ticket.Id" target="_blank" class="ticket-id">#@ticket.Number</a>
                     <span class="ticket-title">@ticket.Title</span>
                     <span class="ticket-priority priority-@ticket.PriorityId">@ticket.PriorityName</span>
                     <span class="ticket-state">@ticket.StateName</span>
                     <span class="ticket-time">@ticket.TimeRemaining</span>
                 </div>
             }
-            @if (Model.TodayClosedTickets.Count > 20)
+
+            @if (Model.TodayClosedTickets.Count > 20);
+
             {
                 <div class="empty-state">... and @(Model.TodayClosedTickets.Count - 20) more closed tickets</div>
             }
@@ -534,8 +732,10 @@
 @section Scripts {
     <script>
         const REFRESH_INTERVAL = 60000; // 60 seconds
+        const ZAMMAD_URL = '@ViewBag.ZammadUrl';
         let countdownTimer;
         let refreshTimer;
+        let currentMetrics = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
 
         // Fetch fresh metrics
         async function fetchMetrics() {
@@ -545,6 +745,7 @@
                 const response = await fetch('/api/DashboardApi/metrics');
                 const data = await response.json();
 
+                currentMetrics = data; // Store for export
                 updateDashboard(data);
 
                 document.getElementById('loadingOverlay').classList.remove('active');
@@ -604,7 +805,7 @@
             const displayTickets = tickets.slice(0, limit);
             container.innerHTML = displayTickets.map(ticket => `
                 <div class="ticket-item">
-                    <span class="ticket-id">#${ticket.number}</span>
+                    <a href="${ZAMMAD_URL}/#ticket/zoom/${ticket.number}" target="_blank" class="ticket-id">#${ticket.number}</a>
                     <span class="ticket-title">${ticket.title}</span>
                     <span class="ticket-priority priority-${ticket.priorityId}">${ticket.priorityName}</span>
                     <span class="ticket-state">${ticket.stateName}</span>
@@ -615,6 +816,176 @@
             if (tickets.length > limit) {
                 container.innerHTML += `<div class="empty-state">... and ${tickets.length - limit} more tickets</div>`;
             }
+        }
+
+        // Export to CSV
+        function exportToCSV() {
+            const data = currentMetrics;
+            const timestamp = new Date().toISOString().split('T')[0];
+
+            let csv = 'Zammad Dashboard Export - ' + timestamp + '\n\n';
+
+            // Summary metrics
+            csv += 'SUMMARY METRICS\n';
+            csv += 'Metric,Count\n';
+            csv += `SLA Breaches,${data.slaBreaches}\n`;
+            csv += `SLA At Risk,${data.slaAtRisk}\n`;
+            csv += `Open P1 Tickets,${data.openP1Tickets}\n`;
+            csv += `P1 On Hold/Awaiting,${data.p1OnHoldCount}\n`;
+            csv += `Open > 48 Hours,${data.ticketsOpenMoreThan48Hours}\n`;
+            csv += `Today's Tickets,${data.todayTicketCount}\n`;
+            csv += `Yesterday's Tickets,${data.yesterdayTicketCount}\n`;
+            csv += `Closed Today,${data.todayClosedCount}\n\n`;
+
+            // SLA Breach Tickets
+            if (data.slaBreachTickets && data.slaBreachTickets.length > 0) {
+                csv += 'SLA BREACH TICKETS\n';
+                csv += 'Ticket #,Title,Priority,State,Time Remaining\n';
+                data.slaBreachTickets.forEach(t => {
+                    csv += `${t.number},"${t.title}",${t.priorityName},${t.stateName},${t.timeRemaining}\n`;
+                });
+                csv += '\n';
+            }
+
+            // SLA At Risk Tickets
+            if (data.slaAtRiskTickets && data.slaAtRiskTickets.length > 0) {
+                csv += 'SLA AT RISK TICKETS\n';
+                csv += 'Ticket #,Title,Priority,State,Time Remaining\n';
+                data.slaAtRiskTickets.forEach(t => {
+                    csv += `${t.number},"${t.title}",${t.priorityName},${t.stateName},${t.timeRemaining}\n`;
+                });
+                csv += '\n';
+            }
+
+            // P1 On Hold Tickets
+            if (data.p1OnHoldTickets && data.p1OnHoldTickets.length > 0) {
+                csv += 'P1 ON HOLD/AWAITING TICKETS\n';
+                csv += 'Ticket #,Title,Priority,State,Age\n';
+                data.p1OnHoldTickets.forEach(t => {
+                    csv += `${t.number},"${t.title}",${t.priorityName},${t.stateName},${t.timeRemaining}\n`;
+                });
+                csv += '\n';
+            }
+
+            // Today's Tickets
+            if (data.todayAllTickets && data.todayAllTickets.length > 0) {
+                csv += 'TICKETS CREATED TODAY\n';
+                csv += 'Ticket #,Title,Priority,State,Age\n';
+                data.todayAllTickets.forEach(t => {
+                    csv += `${t.number},"${t.title}",${t.priorityName},${t.stateName},${t.timeRemaining}\n`;
+                });
+                csv += '\n';
+            }
+
+            // Closed Today
+            if (data.todayClosedTickets && data.todayClosedTickets.length > 0) {
+                csv += 'TICKETS CLOSED TODAY\n';
+                csv += 'Ticket #,Title,Priority,Resolution Time\n';
+                data.todayClosedTickets.forEach(t => {
+                    csv += `${t.number},"${t.title}",${t.priorityName},${t.timeRemaining}\n`;
+                });
+            }
+
+            downloadFile(csv, `Zammad_Dashboard_${timestamp}.csv`, 'text/csv');
+        }
+
+        // Export to Excel (HTML table format)
+        function exportToExcel() {
+            const data = currentMetrics;
+            const timestamp = new Date().toISOString().split('T')[0];
+
+            let html = `
+                <html xmlns:x="urn:schemas-microsoft-com:office:excel">
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        table { border-collapse: collapse; width: 100%; }
+                        th { background: #1e3c72; color: white; padding: 10px; text-align: left; font-weight: bold; }
+                        td { border: 1px solid #ddd; padding: 8px; }
+                        tr:nth-child(even) { background: #f2f2f2; }
+                        .summary { background: #e3f2fd; font-weight: bold; }
+                        .critical { background: #ffebee; }
+                        .warning { background: #fff3e0; }
+                        h2 { color: #1e3c72; margin-top: 20px; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Zammad Dashboard Export - ${timestamp}</h1>
+
+                    <h2>Summary Metrics</h2>
+                    <table>
+                        <tr><th>Metric</th><th>Count</th></tr>
+                        <tr class="critical"><td>SLA Breaches</td><td>${data.slaBreaches}</td></tr>
+                        <tr class="warning"><td>SLA At Risk</td><td>${data.slaAtRisk}</td></tr>
+                        <tr><td>Open P1 Tickets</td><td>${data.openP1Tickets}</td></tr>
+                        <tr><td>P1 On Hold/Awaiting</td><td>${data.p1OnHoldCount}</td></tr>
+                        <tr><td>Open > 48 Hours</td><td>${data.ticketsOpenMoreThan48Hours}</td></tr>
+                        <tr><td>Today's Tickets</td><td>${data.todayTicketCount}</td></tr>
+                        <tr><td>Yesterday's Tickets</td><td>${data.yesterdayTicketCount}</td></tr>
+                        <tr><td>Closed Today</td><td>${data.todayClosedCount}</td></tr>
+                    </table>
+            `;
+
+            // Add ticket sections
+            const sections = [
+                { title: 'SLA Breach Tickets', data: data.slaBreachTickets, className: 'critical' },
+                { title: 'SLA At Risk Tickets', data: data.slaAtRiskTickets, className: 'warning' },
+                { title: 'P1 On Hold/Awaiting', data: data.p1OnHoldTickets, className: '' },
+                { title: 'Tickets Created Today', data: data.todayAllTickets, className: '' },
+                { title: 'Tickets Closed Today', data: data.todayClosedTickets, className: '' }
+            ];
+
+            sections.forEach(section => {
+                if (section.data && section.data.length > 0) {
+                    html += `
+                        <h2>${section.title}</h2>
+                        <table>
+                            <tr>
+                                <th>Ticket #</th>
+                                <th>Title</th>
+                                <th>Priority</th>
+                                <th>State</th>
+                                <th>Time/Age</th>
+                            </tr>
+                    `;
+
+                    section.data.forEach(t => {
+                        html += `
+                            <tr class="${section.className}">
+                                <td>${t.number}</td>
+                                <td>${t.title}</td>
+                                <td>${t.priorityName}</td>
+                                <td>${t.stateName}</td>
+                                <td>${t.timeRemaining}</td>
+                            </tr>
+                        `;
+                    });
+
+                    html += '</table>';
+                }
+            });
+
+            html += '</body></html>';
+
+            downloadFile(html, `Zammad_Dashboard_${timestamp}.xls`, 'application/vnd.ms-excel');
+        }
+
+        // Export to PDF (print-friendly HTML)
+        function exportToPDF() {
+            window.print();
+        }
+
+        // Helper function to download file
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
         }
 
         // Countdown timer
